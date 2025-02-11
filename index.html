@@ -6,49 +6,219 @@
     <title>Valentine's Day</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        /* Body Styling */
         body {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffcccc;
+            background: linear-gradient(45deg, #ffcccc, #ff99cc);
             text-align: center;
             margin: 0;
-            padding: 10px;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
             position: relative;
         }
+
+        /* Center the sun icon */
         .pixel-sun {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 80px;
-            height: 80px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25vw;
+            height: 25vw;
+            animation: sunAnimation 20s linear infinite;
+            opacity: 1; /* Initially hide the sun */
+            z-index: 2;
         }
-        .message {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 4vw;
-            color: #990000;
-            margin-top: 20px;
+
+        .pixel-sun0 {
+            top: 50%;
+            left: 50%;
+            width: 25vw;
+            height: 25vw;
+            z-index: 1;
         }
-        @media (max-width: 600px) {
-            .message {
-                font-size: 5vw;
+
+        /* Continuous slow rotation for the sun */
+        @keyframes sunAnimation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
             }
         }
+
+        /* Message Styling */
+        .message {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5vw;
+            color: #990000;
+            margin-top: 30px;
+        
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .message {
+                font-size: 6vw;
+            }
+        }
+
+        /* Play/Pause Button Styling */
+        .play-pause-button {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Pulse animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Hover Effect for Button */
+        .play-pause-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .play-pause-button img {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Audio Element Styling */
+        audio {
+            margin-top: 30px;
+            border: none;
+            outline: none;
+        }
+
+        /* Progress Bar Styling */
+        .progress-bar-container {
+            width: 80%;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        progress {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #fff;
+            color: #990000;
+            border: none;
+        }
+
+        /* Responsive Design for Smaller Screens */
+        @media (max-width: 600px) {
+            .pixel-sun {
+                width: 40vw;
+                height: 40vw;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <img class="pixel-sun" src="https://img.icons8.com/?size=100&id=KunPS3K23kVO&format=png&color=000000" alt="">
-        
-    <div class="message"><p>
-        You Are My Sunshine<br>My only sunshine<br><br>I love you so much :))
-    </p>
+    <!-- Sun Icon -->
+     <div class="container">
+
+         <img class="pixel-sun" src="https://img.icons8.com/?size=100&id=80502&format=png&color=000000" alt="Sun icon">
+         <!-- <img class="pixel-sun0" src="https://img.icons8.com/?size=100&id=80502&format=png&color=000000" alt="Sun icon"> -->
     </div>
-    <audio controls autoplay loop>
+         
+    <!-- Message Section -->
+    <div class="message">
+        <p>
+            You Are My Sunshine<br>My only sunshine<br><br>I love you so much :))
+        </p>
+    </div>
+
+    <!-- Audio Element (Autoplay and Loop) -->
+    <audio id="audio" autoplay loop muted>
         <source src="https://dl1.tarikhema.org/music/2021/12/07//you%20are%20my%20sunshine-Christina%20Perri.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+        <p>Your browser does not support the audio element. The song is "You Are My Sunshine" by Christina Perri.</p>
     </audio>
+
+    <!-- Play/Pause Button with Image -->
+    <div id="playPauseButton" class="play-pause-button">
+        <img src="https://img.icons8.com/?size=100&id=upd5xh7hPe0R&format=png&color=000000" alt="Play/Pause Icon">
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+        <progress id="progress" value="0" max="100"></progress>
+    </div>
+
+    <script>
+        // Get elements
+        var audio = document.getElementById("audio");
+        var playPauseButton = document.getElementById("playPauseButton");
+        var progressBar = document.getElementById("progress");
+        var sunIcon = document.querySelector(".pixel-sun");
+        var statSunIcon = document.querySelector(".pixel-sun0");
+
+        // Unmute the audio after it starts playing
+        window.onload = function() {
+            audio.muted = false;
+        };
+
+        // Toggle play and pause functionality
+        playPauseButton.onclick = function() {
+            if (audio.paused) {
+                audio.play();
+                playPauseButton.innerHTML = '<img src="https://img.icons8.com/?size=100&id=upd5xh7hPe0R&format=png&color=000000" alt="Pause Icon">';
+            } else {
+                audio.pause();
+                playPauseButton.innerHTML = '<img src="https://img.icons8.com/?size=100&id=upd5xh7hPe0R&format=png&color=000000" alt="Play Icon">';
+            }
+        };
+
+        // Update progress bar as the audio plays
+        audio.ontimeupdate = function() {
+            var progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progress;
+        };
+
+        // Start sun animation when music starts
+        audio.onplay = function() {
+            sunIcon.style.opacity = 1;
+            statSunIcon.style.opacity = 0; // Show the sun and start animation
+        };
+
+        // Pause sun animation when audio is paused
+        audio.onpause = function() {
+            sunIcon.style.opacity = 1; // Hide the sun animation
+            statSunIcon.style.opacity = 1;
+        };
+    </script>
 </body>
 </html>
